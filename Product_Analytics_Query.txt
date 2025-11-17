@@ -1,0 +1,27 @@
+with cte as (
+select 
+pd.Product,
+pd.Category,
+pd.Brand, 
+pd.Description,
+pd.Cost_Price,
+pd.Sale_Price,
+pd.Image_url,
+ps.Date,
+ps.Customer_Type,
+ps.Country,
+ps.Discount_Band,
+ps.Units_Sold,
+(Sale_Price * Units_Sold) as Revenue,
+(Cost_Price * Units_Sold) as Total_Cost,
+format(Date, 'MMMM') as Month,
+format(Date, 'yyyy') as Year
+from Product_data pd
+join product_sales ps
+on pd.Product_ID = ps.Product)
+
+select *,
+(1 - Discount) * Revenue as Discount_Revenue
+from cte
+join discount_data dd
+on cte.Discount_Band = dd.Discount_Band and cte.Month = dd.Month
